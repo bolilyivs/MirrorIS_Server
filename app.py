@@ -14,6 +14,7 @@ auth = HTTPBasicAuth()
 
 @auth.verify_password
 def verify_password(username, password):
+    print(username, password)
     try:
         User.get(User.username == username, User.password == password)
     except:
@@ -41,21 +42,21 @@ def tasks(task_id):
 @auth.login_required
 def create_task():
     task = request.get_json()
-    create_task_query(task, "root")
+    create_task_query(task, auth.username())
     return "ok"
 
 @app.route("/task/<int:task_id>", methods=['PUT'])
 @auth.login_required
 def update_task(task_id):
     task = request.get_json()
-    update_task_query(task_id, task, "root")
+    update_task_query(task_id, task, auth.username())
     return "ok"
 
 @app.route("/task/<int:task_id>", methods=['DELETE'])
 @auth.login_required
 def delete_task(task_id):
     task = request.get_json()
-    delete_task_query(task_id, "root")
+    delete_task_query(task_id, auth.username())
     return "ok"
 
 if __name__ == '__main__':
