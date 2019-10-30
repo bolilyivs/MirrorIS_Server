@@ -43,21 +43,31 @@ def tasks(task_id):
 def create_task():
     task = request.get_json()
     create_task_query(task, auth.username())
-    return "ok"
+    return jsonify("ok")
 
-@app.route("/task/<int:task_id>", methods=['PUT'])
+@app.route("/task/<int:task_id>/update", methods=['PUT'])
 @auth.login_required
 def update_task(task_id):
     task = request.get_json()
     update_task_query(task_id, task, auth.username())
-    return "ok"
+    return jsonify("ok")
 
-@app.route("/task/<int:task_id>", methods=['DELETE'])
+@app.route("/task/<int:task_id>/delete", methods=['DELETE'])
 @auth.login_required
 def delete_task(task_id):
     task = request.get_json()
     delete_task_query(task_id, auth.username())
-    return "ok"
+    return jsonify("ok")
+
+@app.route("/task/<int:task_id>/reset", methods=['get'])
+@auth.login_required
+def reset_task(task_id):
+    return jsonify("ok")
+
+@app.route("/task/<int:task_id>/run", methods=['get'])
+@auth.login_required
+def run_task(task_id):
+    return jsonify("ok")
 
 if __name__ == '__main__':
     app.run()

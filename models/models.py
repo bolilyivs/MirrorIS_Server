@@ -15,13 +15,10 @@ class BaseModel(Model):
     class Meta:
         database = db
 
-class Group(BaseModel):
-    name = CharField()
-
 class User(BaseModel):
     username = CharField()
     password = CharField()
-    group = ForeignKeyField(Group, backref='users')
+    group = IntegerField()
 
 class Log(BaseModel):
     message = CharField()
@@ -30,11 +27,15 @@ class Log(BaseModel):
 
 class Task(BaseModel):
     name = CharField()
-    mirrorURL = CharField()
-    mirrorLocation = CharField()
+    mirror_url = CharField()
+    mirror_location = CharField()
+    mirror_type = IntegerField(default=0)
     user = ForeignKeyField(User, backref='tasks')
 
-    schedule_status = IntegerField(default=0)
+    schedule_status = BooleanField(default=False)
+    schedule_run = BooleanField(default=False)
+    schedule_number = IntegerField(default=1)
+
     schedule_minute = IntegerField(default=0)
     schedule_hour = IntegerField(default=0)
     schedule_day = IntegerField(default=0)
