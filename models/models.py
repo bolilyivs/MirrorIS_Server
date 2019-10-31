@@ -1,15 +1,8 @@
 from peewee import *
-import config
+from models.db_getter import get_db
 import datetime
 
-
-db = MySQLDatabase(
-    database = config.db_name,
-    user = config.db_user,
-    password = config.db_password,
-    host = config.db_host
-)
-
+db = get_db()
 
 class BaseModel(Model):
     class Meta:

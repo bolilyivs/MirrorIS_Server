@@ -1,5 +1,4 @@
 from models.models import *
-import hashlib
 
 def init_user():
     User(username = "root", password = "123", group = 0).save()

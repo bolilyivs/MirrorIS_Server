@@ -1,7 +1,9 @@
 from flask import Flask, jsonify, request
 from flask_cors import CORS
 from flask_httpauth import HTTPBasicAuth
-from models.querys import *
+from queries.task import *
+from queries.user import *
+from queries.log import *
 
 DEBUG = True
 
@@ -21,21 +23,25 @@ def verify_password(username, password):
         return False
     return True
 
+
 @app.route("/", methods=['GET'])
 @auth.login_required
 def test():
     return jsonify("Hello, %s!" % auth.username())
 
+#####################################
+##  Task
+#####################################
 @app.route("/task", methods=['GET'])
 @auth.login_required
-def tasks_list():
+def get_tasks_list():
     offset = request.args.get("offset", default=0, type = int)
     limit = request.args.get("limit", default=15, type = int)
     return jsonify(get_task_list_query(offset, limit))
 
 @app.route("/task/<int:task_id>", methods=['GET'])
 @auth.login_required
-def tasks(task_id):
+def get_task(task_id):
     return jsonify(get_task_query(task_id))
 
 @app.route("/task/create", methods=['POST'])
@@ -55,7 +61,6 @@ def update_task(task_id):
 @app.route("/task/<int:task_id>/delete", methods=['DELETE'])
 @auth.login_required
 def delete_task(task_id):
-    task = request.get_json()
     delete_task_query(task_id, auth.username())
     return jsonify("ok")
 
@@ -68,6 +73,65 @@ def reset_task(task_id):
 @auth.login_required
 def run_task(task_id):
     return jsonify("ok")
+
+#####################################
+##  User
+#####################################
+
+@app.route("/user", methods=['GET'])
+@auth.login_required
+def get_user_list():
+    offset = request.args.get("offset", default=0, type = int)
+    limit = request.args.get("limit", default=15, type = int)
+    return jsonify(get_user_list_query(offset, limit))
+
+@app.route("/user/<int:user_id>", methods=['GET'])
+@auth.login_required
+def get_user(user_id):
+    return jsonify(get_user_query(user_id))
+
+@app.route("/user/create", methods=['POST'])
+@auth.login_required
+def create_user():
+    user = request.get_json()
+    print(user["username"])
+    create_user_query(user, auth.username())
+    return jsonify("ok")
+
+@app.route("/user/<int:user_id>/update", methods=['PUT'])
+@auth.login_required
+def update_user(user_id):
+    user = request.get_json()
+    update_user_query(user_id, user, auth.username())
+    return jsonify("ok")
+
+@app.route("/user/<int:user_id>/delete", methods=['DELETE'])
+@auth.login_required
+def delete_user(user_id):
+    delete_user_query(user_id, auth.username())
+    return jsonify("ok")
+
+
+#####################################
+##  Log
+#####################################
+
+@app.route("/log", methods=['GET'])
+@auth.login_required
+def get_log_list():
+    offset = request.args.get("offset", default=0, type = int)
+    limit = request.args.get("limit", default=15, type = int)
+    return jsonify(get_log_list_query(offset, limit))
+
+@app.route("/log/<int:log_id>", methods=['GET'])
+@auth.login_required
+def get_log(log_id):
+    return jsonify(get_log_query(log_id))
+
+
+#####################################
+##  Main
+#####################################
 
 if __name__ == '__main__':
     app.run()
