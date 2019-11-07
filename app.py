@@ -1,9 +1,9 @@
 from flask import Flask, jsonify, request
 from flask_cors import CORS
 from flask_httpauth import HTTPBasicAuth
-from queries.task import *
+from queries.repository import *
 from queries.user import *
-from queries.log import *
+from queries.task import *
 
 DEBUG = True
 
@@ -32,46 +32,46 @@ def test():
 #####################################
 ##  Task
 #####################################
-@app.route("/task", methods=['GET'])
+@app.route("/repository", methods=['GET'])
 @auth.login_required
-def get_tasks_list():
+def get_repository_list():
     offset = request.args.get("offset", default=0, type = int)
     limit = request.args.get("limit", default=15, type = int)
-    return jsonify(get_task_list_query(offset, limit))
+    return jsonify(get_repository_list_query(offset, limit))
 
-@app.route("/task/<int:task_id>", methods=['GET'])
+@app.route("/repository/<int:repository_id>", methods=['GET'])
 @auth.login_required
-def get_task(task_id):
-    return jsonify(get_task_query(task_id))
+def get_repository(repository_id):
+    return jsonify(get_repository_query(repository_id))
 
-@app.route("/task/create", methods=['POST'])
+@app.route("/repository/create", methods=['POST'])
 @auth.login_required
-def create_task():
+def create_repository():
     task = request.get_json()
-    create_task_query(task, auth.username())
+    create_repository_query(task, auth.username())
     return jsonify("ok")
 
-@app.route("/task/<int:task_id>/update", methods=['PUT'])
+@app.route("/repository/<int:repository_id>/update", methods=['PUT'])
 @auth.login_required
-def update_task(task_id):
-    task = request.get_json()
-    update_task_query(task_id, task, auth.username())
+def update_repository(repository_id):
+    repository = request.get_json()
+    update_repository_query(repository_id, repository, auth.username())
     return jsonify("ok")
 
-@app.route("/task/<int:task_id>/delete", methods=['DELETE'])
+@app.route("/repository/<int:repository_id>/delete", methods=['DELETE'])
 @auth.login_required
-def delete_task(task_id):
-    delete_task_query(task_id, auth.username())
+def delete_repository(repository_id):
+    delete_repository_query(repository_id, auth.username())
     return jsonify("ok")
 
-@app.route("/task/<int:task_id>/reset", methods=['get'])
+@app.route("/repository/<int:repository_id>/reset", methods=['get'])
 @auth.login_required
-def reset_task(task_id):
+def reset_repository(repository_id):
     return jsonify("ok")
 
-@app.route("/task/<int:task_id>/run", methods=['get'])
+@app.route("/repository/<int:repository_id>/run", methods=['get'])
 @auth.login_required
-def run_task(task_id):
+def run_task(repository_id):
     return jsonify("ok")
 
 #####################################
@@ -116,17 +116,17 @@ def delete_user(user_id):
 ##  Log
 #####################################
 
-@app.route("/log", methods=['GET'])
+@app.route("/task", methods=['GET'])
 @auth.login_required
-def get_log_list():
+def get_task_list():
     offset = request.args.get("offset", default=0, type = int)
     limit = request.args.get("limit", default=15, type = int)
-    return jsonify(get_log_list_query(offset, limit))
+    return jsonify(get_task_list_query(offset, limit))
 
-@app.route("/log/<int:log_id>", methods=['GET'])
+@app.route("/task/<int:task_id>", methods=['GET'])
 @auth.login_required
-def get_log(log_id):
-    return jsonify(get_log_query(log_id))
+def get_task(task_id):
+    return jsonify(get_task_query(task_id))
 
 
 #####################################

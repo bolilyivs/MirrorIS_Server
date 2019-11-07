@@ -4,7 +4,6 @@ def get_user_query(id = 1):
     user = User.get_by_id(id)
     return {
         "id": int(user.__str__()),
-
         "username": user.username,
         "group": user.group,
     }
