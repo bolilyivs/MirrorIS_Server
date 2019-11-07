@@ -18,3 +18,8 @@ def get_db():
             password=config.db_password,
             host=config.db_host
         )
+
+    if config.db == "sqlite":
+        return SqliteDatabase(
+            database=config.db_name,
+        )

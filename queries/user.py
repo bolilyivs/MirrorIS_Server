@@ -28,8 +28,6 @@ def create_user_query(jsonUser, username):
         group = jsonUser["group"]
     ).save()
 
-    Log(message="{} create".format(jsonUser["username"]), user=cur_user).save()
-
 def update_user_query(id, jsonUser, username):
     cur_user = User.get(User.username == username)
 
@@ -39,10 +37,7 @@ def update_user_query(id, jsonUser, username):
     user.group = jsonUser["group"]
     user.save()
 
-    Log(message="{} update".format(jsonUser["username"]), user=cur_user).save()
-
 def delete_user_query(id, username):
     cur_user = User.get(User.username == username)
     user = User().get_by_id(id)
-    Log(message="{} delete".format(user.username), user=cur_user).save()
     User().delete_by_id(id)

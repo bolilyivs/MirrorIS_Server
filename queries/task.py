@@ -43,7 +43,7 @@ def get_task_list_query(offset=0, limit=15):
 
 def create_task_query(jsonTask, username):
     user = User.get(User.username == username)
-    Task(
+    task = Task(
         name = jsonTask["name"],
         mirror_url=jsonTask["mirror_url"],
         mirror_location = jsonTask["mirror_location"],
@@ -61,7 +61,7 @@ def create_task_query(jsonTask, username):
         schedule_year = jsonTask["schedule_year"]
     ).save()
 
-    Log(message="{} create".format(jsonTask["name"]), user=user).save()
+    Log(task = Task.get(Task.name == jsonTask["name"]), message="{} create".format(jsonTask["name"]), user=user).save()
 
 def update_task_query(id, jsonTask, username):
     print(jsonTask)
@@ -88,11 +88,11 @@ def update_task_query(id, jsonTask, username):
 
     task.save()
 
-    Log(message="{} update".format(jsonTask["name"]), user=user).save()
+    Log(task = task, message="{} update".format(jsonTask["name"]), user=user).save()
 
 def delete_task_query(id, username):
     user = User.get(User.username == username)
     task = Task().get_by_id(id)
-    Log(message="{} delete".format(task.name), user=user).save()
+    Log(task = task, message="{} delete".format(task.name), user=user).save()
     Task().delete_by_id(id)
 

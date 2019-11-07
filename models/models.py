@@ -13,11 +13,6 @@ class User(BaseModel):
     password = CharField()
     group = IntegerField()
 
-class Log(BaseModel):
-    message = CharField()
-    user = ForeignKeyField(User, backref='logs')
-    date = DateTimeField(default=datetime.datetime.now)
-
 class Task(BaseModel):
     name = CharField()
     mirror_url = CharField()
@@ -38,3 +33,8 @@ class Task(BaseModel):
     created_at = DateTimeField(default=datetime.datetime.now())
     updated_at = DateTimeField(default=datetime.datetime.now())
 
+class Log(BaseModel):
+    message = CharField()
+    task = ForeignKeyField(Task, backref='tasks')
+    user = ForeignKeyField(User, backref='logs')
+    date = DateTimeField(default=datetime.datetime.now)
