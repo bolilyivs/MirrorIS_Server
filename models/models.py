@@ -30,6 +30,8 @@ class Repository(BaseModel):
     schedule_month = IntegerField(default=0)
     schedule_year = IntegerField(default=0)
 
+    schedule_next_update = DateTimeField(default=datetime.datetime.now())
+
     created_at = DateTimeField(default=datetime.datetime.now())
     updated_at = DateTimeField(default=datetime.datetime.now())
 
@@ -38,3 +40,6 @@ class Task(BaseModel):
     repository = ForeignKeyField(Repository, backref='tasks')
     user = ForeignKeyField(User, backref='logs')
     date = DateTimeField(default=datetime.datetime.now)
+
+class QueueTask(BaseModel):
+    repository = ForeignKeyField(Repository, backref='repositorys', unique=True)

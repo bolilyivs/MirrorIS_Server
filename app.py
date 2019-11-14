@@ -67,11 +67,13 @@ def delete_repository(repository_id):
 @app.route("/repository/<int:repository_id>/reset", methods=['get'])
 @auth.login_required
 def reset_repository(repository_id):
+    reset_repository_query(repository_id, auth.username())
     return jsonify("ok")
 
 @app.route("/repository/<int:repository_id>/run", methods=['get'])
 @auth.login_required
 def run_task(repository_id):
+    run_repository_query(repository_id, auth.username())
     return jsonify("ok")
 
 #####################################
