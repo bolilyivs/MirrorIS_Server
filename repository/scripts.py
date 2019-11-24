@@ -6,9 +6,9 @@ import time
 # создает файловую систему zfs в dir_path
 def create(dir_path):
     ############################
-    time.sleep(20)
+    time.sleep(10)
     print(f"Task Create {dir_path}")
-    return 1
+    return 0
     #############################
     # try:
     #     subprocess.check_call(["zfs", "create", dir_path])
@@ -25,9 +25,9 @@ def create(dir_path):
 
 def update(dir_path, address_server, args = "-vaHz"):
     ############################
-    time.sleep(60)
+    time.sleep(20)
     print(f"Task update args = {args}")
-    return 1
+    return 0
     #############################
     # try:
     #     subprocess.check_call(["rsync", args, address_server, "/" + dir_path + "/"])
@@ -39,9 +39,9 @@ def update(dir_path, address_server, args = "-vaHz"):
 # create snapshot and delete last if count_snapshot >
 def snapshot(dir_path, count_snapshot):
     ############################
-    time.sleep(20)
+    time.sleep(10)
     print(f"Task snapshot count_snaps = {count_snapshot}; dir = {dir_path}")
-    return 1
+    return 0
     #############################
     # try:
     #     snapname = str(datetime.datetime.now())
@@ -66,9 +66,9 @@ def snapshot(dir_path, count_snapshot):
 
 def reset(dir_zfs):
     ############################
-    time.sleep(20)
+    time.sleep(10)
     print("Task reset")
-    return 1
+    return 0
     #############################
     # # delete zfs file system
     # delete(dir_zfs)
@@ -79,9 +79,9 @@ def reset(dir_zfs):
 
 def delete(dir_zfs):
     ############################
-    time.sleep(20)
+    time.sleep(10)
     print(f"Task delete dir= {dir_zfs}")
-    return 1
+    return 0
     #############################
     # # delete zfs file system
     # try:

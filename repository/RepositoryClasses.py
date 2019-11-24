@@ -54,10 +54,10 @@ class RepositoryUpdate(RepositoryBase):
         self.update_date_task()
         dir_path = f"{self.repo.mirror_zpool}/{self.repo.mirror_location}"
 
-        if(update(dir_path, self.repo.mirror_url, self.repo.args) != 0):
+        if(update(dir_path, self.repo.mirror_url, self.repo.mirror_args) != 0):
             self.log_write(self.get_error_message())
             return -1
-        print("update", dir_path, self.repo.args)
+        print("update", dir_path, self.repo.mirror_args)
 
         if(snapshot(dir_path, self.repo.schedule_number) != 0):
             self.log_write(self.get_snapshot_error_message())
