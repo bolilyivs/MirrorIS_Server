@@ -4,8 +4,6 @@ from dateutil.relativedelta import *
 import time
 import config
 
-zpool = config.zpool + "/"
-
 ##############################################
 class RepositoryCreate(RepositoryBase):
 
@@ -16,11 +14,12 @@ class RepositoryCreate(RepositoryBase):
         return "repository finished create"
 
     def base(self):
-        code = create(zpool + self.repo.mirror_location)
+        dir_path = f"{self.repo.mirror_zpool}/{self.repo.mirror_location}"
+        code = create(dir_path)
         if(code != 0):
             self.log_write("Error create")
             return 1
-        print("create", zpool + self.repo.mirror_location)
+        print("create", dir_path)
 
         return 0
 
@@ -37,6 +36,7 @@ class RepositoryUpdate(RepositoryBase):
             hours=self.repo.schedule_hour,
             minutes=self.repo.schedule_minute)
         self.repo.schedule_next_update = date
+        self.repo.save()
 
     def get_started_message(self):
         return "repository started update"
@@ -51,15 +51,20 @@ class RepositoryUpdate(RepositoryBase):
         return "repository error snapshot"
 
     def base(self):
-        if(update(zpool + self.repo.mirror_location, self.repo.mirror_url) != 0):
+        self.update_date_task()
+        dir_path = f"{self.repo.mirror_zpool}/{self.repo.mirror_location}"
+
+        if(update(dir_path, self.repo.mirror_url, self.repo.args) != 0):
             self.log_write(self.get_error_message())
             return -1
-        print("update", zpool + self.repo.mirror_location)
-        if(snapshot(zpool + self.repo.mirror_location, self.repo.schedule_number) != 0):
+        print("update", dir_path, self.repo.args)
+
+        if(snapshot(dir_path, self.repo.schedule_number) != 0):
             self.log_write(self.get_snapshot_error_message())
             return -2
-        print("snapshot", zpool + self.repo.mirror_location, self.repo.schedule_number)
-        self.update_date_task()
+
+        print("snapshot", dir_path, self.repo.schedule_number)
+
         return 0
 
 
@@ -72,8 +77,9 @@ class RepositoryDelete(RepositoryBase):
         return "repository finished delete"
 
     def base(self):
-        delete(zpool + self.repo.mirror_location)
-        print("delete", zpool + self.repo.mirror_location)
+        dir_path = f"{self.repo.mirror_zpool}/{self.repo.mirror_location}"
+        delete(dir_path)
+        print("delete", dir_path)
         return 0
 
 ##############################################

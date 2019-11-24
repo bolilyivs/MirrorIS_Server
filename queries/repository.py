@@ -11,8 +11,10 @@ def get_repository_query(id = 1):
 
         "name": repository.name,
         "mirror_url": repository.mirror_url,
+        "mirror_zpool": repository.mirror_zpool,
         "mirror_location": repository.mirror_location,
         "mirror_type": repository.mirror_type,
+        "mirror_args": repository.mirror_args,
         "user": repository.user.username,
 
         "schedule_status" : repository.schedule_status,
@@ -48,8 +50,11 @@ def create_repository_query(jsonRepository, username):
     repository = Repository(
         name = jsonRepository["name"],
         mirror_url=jsonRepository["mirror_url"],
+        mirror_zpool=jsonRepository["mirror_zpool"],
         mirror_location = jsonRepository["mirror_location"],
         mirror_type=jsonRepository["mirror_type"],
+        mirror_args=jsonRepository["mirror_args"],
+
         user=user,
 
         schedule_status = jsonRepository["schedule_status"],
@@ -76,8 +81,10 @@ def update_repository_query(id, jsonRepository, username):
 
     repository.name = jsonRepository["name"]
     repository.mirror_url = jsonRepository["mirror_url"]
+    repository.mirror_zpool = jsonRepository["mirror_zpool"]
     repository.mirror_location = jsonRepository["mirror_location"]
     repository.mirror_type = jsonRepository["mirror_type"]
+    repository.mirror_args = jsonRepository["mirror_args"]
 
     repository.schedule_status = jsonRepository["schedule_status"]
     repository.schedule_run = jsonRepository["schedule_run"]

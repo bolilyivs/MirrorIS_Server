@@ -3,17 +3,19 @@ from  repository import RepositoryClasses
 import time
 from models.models import *
 
-
 threadings = 2
+threadList = {}
 
 def get_repos():
   repos = Repository.select().where(
     (Repository.schedule_status == True) &
-    (Repository.schedule_run == False) &
     (Repository.schedule_next_update <= datetime.datetime.now())).order_by(Repository.schedule_next_update)
   if repos.count() > 0:
     for repo in repos:
       print(repo.name, repo.schedule_next_update)
+      if repo.name in threadList and threadList[repo.name].is_alive():
+        threadList[repo.name].kill()
+        print("thread", repo.name, "stop")
       try:
         QueueTask(repository = repo).save()
       except:
@@ -27,7 +29,7 @@ def run_task():
   if tasks and tasks.count() > 0:
     for task in tasks:
       if not task.repository.schedule_run:
-        ScheduleTaskRunner(RepositoryClasses.RepositoryUpdate(task.repository)).run(task.get_id())
+        threadList[task.repository.name] = ScheduleTaskRunner(RepositoryClasses.RepositoryUpdate(task.repository)).run(task.get_id())
 
 def clear_tasks():
   QueueTask.truncate_table()
@@ -39,6 +41,7 @@ def clear_tasks():
 
 
 def main():
+  threadList = []
   clear_tasks()
   while True:
     print("get_repos")

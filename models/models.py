@@ -16,8 +16,11 @@ class User(BaseModel):
 class Repository(BaseModel):
     name = CharField()
     mirror_url = CharField()
+    mirror_zpool = CharField()
     mirror_location = CharField()
     mirror_type = IntegerField(default=0)
+    mirror_args = CharField()
+
     user = ForeignKeyField(User, backref='tasks')
 
     schedule_status = BooleanField(default=False)
