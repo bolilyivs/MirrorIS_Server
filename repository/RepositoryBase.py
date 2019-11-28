@@ -11,7 +11,10 @@ class RepositoryBase():
         return "task finished"
 
     def log_write(self, msg):
-        Task(repository=self.repo, message=msg, user=User.get_by_id(1)).save()
+        if type(msg) != str:
+            msg = msg.decode('utf-8')
+        if msg != "":
+            Task(repository=self.repo, message=msg, user=User.get_by_id(1)).save()
 
     def base(self):
         pass

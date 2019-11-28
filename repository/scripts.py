@@ -8,13 +8,12 @@ def create(dir_path):
     ############################
     time.sleep(10)
     print(f"Task Create {dir_path}")
-    return 0
+    return (0, "ok")
     #############################
     # try:
-    #     subprocess.check_call(["zfs", "create", dir_path])
+    #     return (0, subprocess.check_output(["zfs", "create", dir_path]))
     # except subprocess.CalledProcessError as e:
-    #     return -1
-    # return 0
+    #     return (1, e.output)
 
 
 # rsync выполняет синхронизацию с address_server в dir_path -> zstorage/test3
@@ -27,13 +26,12 @@ def update(dir_path, address_server, args = "-vaHz"):
     ############################
     time.sleep(20)
     print(f"Task update args = {args}")
-    return 0
+    return (0, "ok")
     #############################
     # try:
-    #     subprocess.check_call(["rsync", args, address_server, "/" + dir_path + "/"])
+    #     return (0, subprocess.check_output(["rsync", args, address_server, "/" + dir_path + "/"]))
     # except subprocess.CalledProcessError as e:
-    #     return -2
-    # return 0
+    #     return (1, e.output)
 
 
 # create snapshot and delete last if count_snapshot >
@@ -41,12 +39,12 @@ def snapshot(dir_path, count_snapshot):
     ############################
     time.sleep(10)
     print(f"Task snapshot count_snaps = {count_snapshot}; dir = {dir_path}")
-    return 0
+    return (0, "ok")
     #############################
     # try:
     #     snapname = str(datetime.datetime.now())
     #     snapname = snapname.replace(' ', '_')
-    #     subprocess.check_call(["zfs", "snapshot", dir_path + "@" + snapname])
+    #     res = subprocess.check_output(["zfs", "snapshot", dir_path + "@" + snapname])
     #
     #     # берем количество существующих dir_path
     #     isMore = "zfs list -H -t snapshot -o name -S creation -r " + dir_path + " | wc -l"
@@ -55,20 +53,18 @@ def snapshot(dir_path, count_snapshot):
     #     # если их больше то удаляем
     #     if int(subprocess.check_output(isMore, shell=True)) > count_snapshot:
     #         delete = "zfs list -H -t snapshot -o name -S creation -r " + dir_path + " | tail -1 | xargs -n 1 zfs  destroy"
-    #         subprocess.call(delete, shell=True)
-    #         print("deleted")
+    #         res + subprocess.check_output(delete, shell=True)
+    #     return (0, res)
     #
     # except subprocess.CalledProcessError as e:
-    #     return -3
-    #
-    # return 0
+    #     return (1, e.output)
 
 
 def reset(dir_zfs):
     ############################
     time.sleep(10)
     print("Task reset")
-    return 0
+    return (0, "ok")
     #############################
     # # delete zfs file system
     # delete(dir_zfs)
@@ -81,11 +77,19 @@ def delete(dir_zfs):
     ############################
     time.sleep(10)
     print(f"Task delete dir= {dir_zfs}")
-    return 0
+    return (0, "ok")
     #############################
-    # # delete zfs file system
+    # delete zfs file system
     # try:
-    #     subprocess.check_call(["zfs", "destroy", "-r", dir_zfs])
+    #     return (0, subprocess.check_output(["zfs", "destroy", "-r", dir_zfs]))
     # except subprocess.CalledProcessError as e:
-    #     return -1
-    # return 0
+    #     return (1, e.output)
+
+def get_zpool_list():
+    return (0, "zroot")
+
+    # try:
+    #     zpool_list = "zpool list | awk '{if (FNR > 1) print $1}'"
+    #     return (0, subprocess.check_output(zpool_list, shell=True))
+    # except subprocess.CalledProcessError as e:
+    #     return (1, e.output)

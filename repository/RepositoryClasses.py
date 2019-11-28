@@ -15,8 +15,10 @@ class RepositoryCreate(RepositoryBase):
 
     def base(self):
         dir_path = f"{self.repo.mirror_zpool}/{self.repo.mirror_location}"
-        code = create(dir_path)
-        if(code != 0):
+        out = create(dir_path)
+        self.log_write(out[1])
+
+        if(out[0] != 0):
             self.log_write("Error create")
             return 1
         print("create", dir_path)
@@ -54,14 +56,19 @@ class RepositoryUpdate(RepositoryBase):
         self.update_date_task()
         dir_path = f"{self.repo.mirror_zpool}/{self.repo.mirror_location}"
 
-        if(update(dir_path, self.repo.mirror_url, self.repo.mirror_args) != 0):
+        out = update(dir_path, self.repo.mirror_url, self.repo.mirror_args)
+        self.log_write(out[1])
+        if( out[0] != 0):
             self.log_write(self.get_error_message())
-            return -1
+            return 1
         print("update", dir_path, self.repo.mirror_args)
 
-        if(snapshot(dir_path, self.repo.schedule_number) != 0):
+        out = snapshot(dir_path, self.repo.schedule_number)
+        self.log_write(out[1])
+
+        if( out[0] != 0):
             self.log_write(self.get_snapshot_error_message())
-            return -2
+            return 2
 
         print("snapshot", dir_path, self.repo.schedule_number)
 
@@ -78,7 +85,14 @@ class RepositoryDelete(RepositoryBase):
 
     def base(self):
         dir_path = f"{self.repo.mirror_zpool}/{self.repo.mirror_location}"
-        delete(dir_path)
+
+
+        out = delete(dir_path)
+        self.log_write(out[1])
+
+        if (out[0] != 0):
+            self.log_write("delete error")
+            return 2
         print("delete", dir_path)
         return 0
 
@@ -92,12 +106,12 @@ class RepositoryFullCreate(RepositoryBase):
 
     def base(self):
         if RepositoryCreate(self.repo).run() != 0:
-            print("RepositoryCreate", "error")
-            return -1
+            return 1
         if RepositoryUpdate(self.repo).run() != 0:
             print("RepositoryUpdate", "error")
-            return -2
+            return 2
         print("full create")
+        return 0
 
 ##############################################
 class RepositoryReset(RepositoryBase):
@@ -110,14 +124,15 @@ class RepositoryReset(RepositoryBase):
     def base(self):
         if RepositoryDelete(self.repo).run() != 0:
             print("RepositoryDelete", "error")
-            return -1
+            return 1
         if RepositoryCreate(self.repo).run() != 0:
             print("RepositoryCreate", "error")
-            return -2
+            return 2
         if RepositoryUpdate(self.repo).run() != 0:
             print("RepositoryUpdate", "error")
-            return -3
+            return 3
         print("reset")
+        return 0
 
 ##############################################
 

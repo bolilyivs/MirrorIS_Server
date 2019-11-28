@@ -4,6 +4,7 @@ from flask_httpauth import HTTPBasicAuth
 from queries.repository import *
 from queries.user import *
 from queries.task import *
+import repository.scripts as scripts
 
 DEBUG = True
 
@@ -122,7 +123,7 @@ def delete_user(user_id):
 @auth.login_required
 def get_task_list():
     offset = request.args.get("offset", default=0, type = int)
-    limit = request.args.get("limit", default=15, type = int)
+    limit = request.args.get("limit", default=50, type = int)
     return jsonify(get_task_list_query(offset, limit))
 
 @app.route("/task/<int:task_id>", methods=['GET'])
@@ -136,10 +137,9 @@ def get_task(task_id):
 
 @app.route("/zpool", methods=['GET'])
 @auth.login_required
-def get_zpool_list():
-    offset = request.args.get("offset", default=0, type = int)
-    limit = request.args.get("limit", default=15, type = int)
-    return jsonify(["zroot", "ztest1", "ztest2"])
+def get_zpool_list_resp():
+    res = scripts.get_zpool_list()[1].decode('utf-8').split('\n')
+    return jsonify(res)
 
 #####################################
 ##  Main
