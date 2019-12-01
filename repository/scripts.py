@@ -24,7 +24,7 @@ def create(dir_path):
 
 def update(dir_path, address_server, args = "-vaHz"):
     ############################
-    time.sleep(20)
+    time.sleep(100)
     print(f"Task update args = {args}")
     return (0, "ok")
     #############################

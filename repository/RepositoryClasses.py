@@ -111,6 +111,8 @@ class RepositoryFullCreate(RepositoryBase):
             print("RepositoryUpdate", "error")
             return 2
         print("full create")
+        self.repo.mirror_init = True
+        self.repo.save()
         return 0
 
 ##############################################
@@ -125,12 +127,9 @@ class RepositoryReset(RepositoryBase):
         if RepositoryDelete(self.repo).run() != 0:
             print("RepositoryDelete", "error")
             return 1
-        if RepositoryCreate(self.repo).run() != 0:
+        if RepositoryFullCreate(self.repo).run() != 0:
             print("RepositoryCreate", "error")
             return 2
-        if RepositoryUpdate(self.repo).run() != 0:
-            print("RepositoryUpdate", "error")
-            return 3
         print("reset")
         return 0
 

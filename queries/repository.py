@@ -16,7 +16,7 @@ def get_repository_query(id = 1):
         "mirror_type": repository.mirror_type,
         "mirror_args": repository.mirror_args,
         "user": repository.user.username,
-
+        "mirror_init": repository.mirror_init,
         "schedule_status" : repository.schedule_status,
         "schedule_run": repository.schedule_run,
         "schedule_number": repository.schedule_number,

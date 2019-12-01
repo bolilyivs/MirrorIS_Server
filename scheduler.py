@@ -9,6 +9,7 @@ threadList = {}
 def get_repos():
   repos = Repository.select().where(
     (Repository.schedule_status == True) &
+    (Repository.mirror_init == True) &
     (Repository.schedule_next_update <= datetime.datetime.now())).order_by(Repository.schedule_next_update)
   if repos.count() > 0:
     for repo in repos:

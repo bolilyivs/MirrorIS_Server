@@ -20,6 +20,7 @@ class Repository(BaseModel):
     mirror_location = CharField()
     mirror_type = IntegerField(default=0)
     mirror_args = CharField()
+    mirror_init = BooleanField(default=False)
 
     user = ForeignKeyField(User, backref='tasks')
 
