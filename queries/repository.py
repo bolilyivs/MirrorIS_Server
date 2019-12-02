@@ -31,10 +31,34 @@ def get_repository_query(id = 1):
         "updated_at": repository.updated_at,
     }
 
-def get_repository_list_query(offset=0, limit=15):
-    repositoryList = []
+def get_repository_count_query(username = ""):
 
-    for repository in Repository.select().offset(offset).limit(limit):
+    if username == "":
+        query = Repository.select().count()
+    else:
+        user = User.get(User.username == username)
+        query = Repository.select().where(Repository.user == user).count()
+
+    return query
+
+def check_repository_query(name):
+     try:
+         Repository.get(Repository.name == name)
+     except:
+         return False
+
+     return True
+
+def get_repository_list_query(offset=0, limit=15, username = ""):
+    repositoryList = []
+    query = None
+    if username == "":
+        query = Repository.select().offset(offset).limit(limit)
+    else:
+        user = User.get(User.username == username)
+        query = Repository.select().where(Repository.user == user).offset(offset).limit(limit)
+
+    for repository in query:
         repositoryList.append({
             "id": int(repository.__str__()),
             "name": repository.name,
@@ -127,6 +151,7 @@ def run_repository_query(id, username):
 def reset_repository_query(id, username):
     user = User.get(User.username == username)
     repository = Repository().get_by_id(id)
+    repository.mirror_init = False
     ###############
     TaskRunner(RepositoryReset(repository)).run()
     ###############

@@ -24,7 +24,7 @@ def create(dir_path):
 
 def update(dir_path, address_server, args = "-vaHz"):
     ############################
-    time.sleep(100)
+    time.sleep(10)
     print(f"Task update args = {args}")
     return (0, "ok")
     #############################
@@ -79,7 +79,7 @@ def delete(dir_zfs):
     print(f"Task delete dir= {dir_zfs}")
     return (0, "ok")
     #############################
-    # delete zfs file system
+    #delete zfs file system
     # try:
     #     return (0, subprocess.check_output(["zfs", "destroy", "-r", dir_zfs]))
     # except subprocess.CalledProcessError as e:
@@ -87,7 +87,7 @@ def delete(dir_zfs):
 
 def get_zpool_list():
     return (0, "zroot")
-
+    #############################
     # try:
     #     zpool_list = "zpool list | awk '{if (FNR > 1) print $1}'"
     #     return (0, subprocess.check_output(zpool_list, shell=True))

@@ -10,6 +10,9 @@ def get_task_query(id = 1):
         "date": task.date,
     }
 
+def get_task_count_query():
+    return Task.select().count()
+
 def get_task_list_query(offset=0, limit=15):
     taskList = []
 

@@ -8,6 +8,19 @@ def get_user_query(id = 1):
         "group": user.group,
     }
 
+
+def check_user_query(name):
+    try:
+        User.get(User.username == name)
+    except:
+        return False
+
+    return True
+
+
+def get_user_count_query():
+    return User.select().count()
+
 def get_user_list_query(offset=0, limit=15):
     userList = []
 
@@ -32,7 +45,8 @@ def update_user_query(id, jsonUser, username):
 
     user = User().get_by_id(id)
     user.username = jsonUser["username"]
-    user.password = jsonUser["password"]
+    if(jsonUser["password"] != ""):
+        user.password = jsonUser["password"]
     user.group = jsonUser["group"]
     user.save()
 
@@ -40,3 +54,7 @@ def delete_user_query(id, username):
     cur_user = User.get(User.username == username)
     user = User().get_by_id(id)
     User().delete_by_id(id)
+
+def get_group_query(username):
+    user = User.get(User.username == username)
+    return user.group

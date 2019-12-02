@@ -33,12 +33,36 @@ def test():
 #####################################
 ##  Task
 #####################################
+@app.route("/repository/check", methods=['POST'])
+@auth.login_required
+def check_repository():
+    name = request.get_json()
+    return jsonify(check_repository_query(name["name"]))
+
+
 @app.route("/repository", methods=['GET'])
 @auth.login_required
 def get_repository_list():
     offset = request.args.get("offset", default=0, type = int)
     limit = request.args.get("limit", default=15, type = int)
     return jsonify(get_repository_list_query(offset, limit))
+
+@app.route("/repository/my", methods=['GET'])
+@auth.login_required
+def get_my_repository_list():
+    offset = request.args.get("offset", default=0, type = int)
+    limit = request.args.get("limit", default=15, type = int)
+    return jsonify(get_repository_list_query(offset, limit, auth.username()))
+
+@app.route("/repository/count", methods=['GET'])
+@auth.login_required
+def get_repository_count():
+    return jsonify(get_repository_count_query())
+
+@app.route("/repository/my/count", methods=['GET'])
+@auth.login_required
+def get_my_repository_count():
+    return jsonify(get_repository_count_query(auth.username()))
 
 @app.route("/repository/<int:repository_id>", methods=['GET'])
 @auth.login_required
@@ -81,6 +105,17 @@ def run_task(repository_id):
 ##  User
 #####################################
 
+@app.route("/user/check", methods=['POST'])
+@auth.login_required
+def check_user():
+    name = request.get_json()
+    return jsonify(check_user_query(name["name"]))
+
+@app.route("/user/count", methods=['GET'])
+@auth.login_required
+def get_user_count():
+    return jsonify(get_user_count_query())
+
 @app.route("/user", methods=['GET'])
 @auth.login_required
 def get_user_list():
@@ -114,10 +149,20 @@ def delete_user(user_id):
     delete_user_query(user_id, auth.username())
     return jsonify("ok")
 
+@app.route("/user/check_group", methods=['GET'])
+@auth.login_required
+def get_group():
+    return jsonify(get_group_query(auth.username()))
+
 
 #####################################
 ##  Log
 #####################################
+
+@app.route("/task/count", methods=['GET'])
+@auth.login_required
+def get_task_count():
+    return jsonify(get_task_count_query())
 
 @app.route("/task", methods=['GET'])
 @auth.login_required
@@ -138,8 +183,8 @@ def get_task(task_id):
 @app.route("/zpool", methods=['GET'])
 @auth.login_required
 def get_zpool_list_resp():
-    res = scripts.get_zpool_list()[1].decode('utf-8').split('\n')
-    return jsonify(res)
+    #res = scripts.get_zpool_list()[1].decode('utf-8').split('\n')[:-1]
+    return jsonify(["zroot"])
 
 #####################################
 ##  Main

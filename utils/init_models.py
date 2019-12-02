@@ -4,6 +4,7 @@ from queries.repository import *
 
 def init_user():
     User(username="root", password="123", group=0).save()
+    User(username="user1", password="123", group=1).save()
 
 
 def init_Task():
@@ -37,7 +38,7 @@ def init_Task():
         "schedule_number": 2,
         "schedule_status": True,
         "schedule_year": 0
-    }, "root")
+    }, "user1")
 
     create_repository_query({
         "mirror_zpool": "zroot",
@@ -53,7 +54,7 @@ def init_Task():
         "schedule_number": 2,
         "schedule_status": False,
         "schedule_year": 0
-    }, "root")
+    }, "user1")
 
     create_repository_query({
         "mirror_location": "ubuntu",
