@@ -29,7 +29,7 @@ def update(dir_path, address_server, args = "-vaHz"):
     return (0, "ok")
     #############################
     # try:
-    #     return (0, subprocess.check_output(["rsync", args, address_server, "/" + dir_path + "/"]))
+    #     return (0, subprocess.check_output(["rsync", args, address_server, "/" + dir_path + "/"])[-20000:])
     # except subprocess.CalledProcessError as e:
     #     return (1, e.output)
 

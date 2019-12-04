@@ -1,6 +1,7 @@
 from repository.RepositoryBase import RepositoryBase
 from repository.scripts import *
 from dateutil.relativedelta import *
+import datetime
 import time
 import config
 
@@ -31,10 +32,9 @@ class RepositoryUpdate(RepositoryBase):
     def update_date_task(self):
         date = datetime.datetime.now()
         date += relativedelta(
-            year=self.repo.schedule_year,
-            month=self.repo.schedule_month,
-            day=self.repo.schedule_day)
-        date += datetime.timedelta(
+            years=self.repo.schedule_year,
+            months=self.repo.schedule_month,
+            days=self.repo.schedule_day,
             hours=self.repo.schedule_hour,
             minutes=self.repo.schedule_minute)
         self.repo.schedule_next_update = date

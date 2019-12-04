@@ -50,6 +50,6 @@ def main():
       print("run_task")
       run_task()
     print("sleep")
-    time.sleep(20)
+    time.sleep(60)
 
 main()

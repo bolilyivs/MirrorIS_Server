@@ -5,7 +5,7 @@ def get_task_query(id = 1):
     return {
         "id": int(task.__str__()),
         "repository" : task.repository.name,
-        "message": task.message,
+        "message": task.message[-20000:],
         "user": task.user.username,
         "date": task.date,
     }
@@ -20,7 +20,7 @@ def get_task_list_query(offset=0, limit=15):
         taskList.append({
             "id": int(task.__str__()),
             "repository": task.repository.name,
-            "message": task.message,
+            "message": task.message[:50],
             "user": task.user.username,
             "date": task.date,
         })
