@@ -57,4 +57,8 @@ def delete_user_query(id, username):
 
 def get_group_query(username):
     user = User.get(User.username == username)
-    return user.group
+    return {
+        "id" : user.get_id(),
+        "username": user.username,
+        "group": user.group
+    }
