@@ -49,13 +49,15 @@ def check_repository_query(name):
 
      return True
 
-def get_repository_list_query(offset=0, limit=15, username = ""):
+def get_repository_list_query(offset=0, limit=15, username = "", my=False):
     repositoryList = []
     query = None
-    if username == "":
+    user = User.get(User.username == username)
+    if not my:
+        if user.group != 0:
+            return "-1"
         query = Repository.select().offset(offset).limit(limit)
     else:
-        user = User.get(User.username == username)
         query = Repository.select().where(Repository.user == user).offset(offset).limit(limit)
 
     for repository in query:
@@ -71,6 +73,7 @@ def get_repository_list_query(offset=0, limit=15, username = ""):
 
 def create_repository_query(jsonRepository, username):
     user = User.get(User.username == username)
+
     repository = Repository(
         name = jsonRepository["name"],
         mirror_url=jsonRepository["mirror_url"],
@@ -101,6 +104,10 @@ def update_repository_query(id, jsonRepository, username):
 
     user = User.get(User.username == username)
     repository = Repository().get_by_id(id)
+
+    if(check_repository_query(jsonRepository["name"]) and repository.name != jsonRepository["name"]):
+        return "-1"
+
     mirror_location = repository.mirror_location
 
     repository.name = jsonRepository["name"]
@@ -130,6 +137,7 @@ def update_repository_query(id, jsonRepository, username):
     if(repository.mirror_location != mirror_location):
         TaskRunner(RepositoryReset(repository)).run()
     ###############
+    return 0
 
 def delete_repository_query(id, username):
     user = User.get(User.username == username)

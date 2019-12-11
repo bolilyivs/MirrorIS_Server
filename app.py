@@ -4,7 +4,7 @@ from flask_httpauth import HTTPBasicAuth
 from queries.repository import *
 from queries.user import *
 from queries.task import *
-import repository.scripts as scripts
+import re
 
 DEBUG = True
 
@@ -45,14 +45,17 @@ def check_repository():
 def get_repository_list():
     offset = request.args.get("offset", default=0, type = int)
     limit = request.args.get("limit", default=15, type = int)
-    return jsonify(get_repository_list_query(offset, limit))
+    data = get_repository_list_query(offset, limit, auth.username())
+    if data == "-1":
+        raise -1
+    return jsonify(data)
 
 @app.route("/repository/my", methods=['GET'])
 @auth.login_required
 def get_my_repository_list():
     offset = request.args.get("offset", default=0, type = int)
     limit = request.args.get("limit", default=15, type = int)
-    return jsonify(get_repository_list_query(offset, limit, auth.username()))
+    return jsonify(get_repository_list_query(offset, limit, auth.username(), my=True))
 
 @app.route("/repository/count", methods=['GET'])
 @auth.login_required
@@ -72,16 +75,28 @@ def get_repository(repository_id):
 @app.route("/repository/create", methods=['POST'])
 @auth.login_required
 def create_repository():
-    task = request.get_json()
-    create_repository_query(task, auth.username())
+    repository = request.get_json()
+    if (check_repository_query(repository["name"])):
+        return jsonify("-1")
+    result = re.match(r"^(?:|rsync:\/\/)?[\w.-]+(?:\.[\w\.-]+)+[\w\-\._~:/?#[\]@!\$&'\(\)\*\+,;=.]+$", repository["mirror_url"])
+    if not result:
+        return jsonify("-2")
+    create_repository_query(repository, auth.username())
     return jsonify("ok")
 
 @app.route("/repository/<int:repository_id>/update", methods=['PUT'])
 @auth.login_required
 def update_repository(repository_id):
     repository = request.get_json()
-    update_repository_query(repository_id, repository, auth.username())
-    return jsonify("ok")
+
+    result = re.match(r"^(?:|rsync:\/\/)?[\w.-]+(?:\.[\w\.-]+)+[\w\-\._~:/?#[\]@!\$&'\(\)\*\+,;=.]+$",
+                      repository["mirror_url"])
+    if not result:
+        return jsonify("-2")
+    code = update_repository_query(repository_id, repository, auth.username())
+    if not code:
+        return jsonify("ok")
+    return jsonify(code)
 
 @app.route("/repository/<int:repository_id>/delete", methods=['DELETE'])
 @auth.login_required
@@ -121,7 +136,10 @@ def get_user_count():
 def get_user_list():
     offset = request.args.get("offset", default=0, type = int)
     limit = request.args.get("limit", default=15, type = int)
-    return jsonify(get_user_list_query(offset, limit))
+    data = get_user_list_query(offset, limit, auth.username())
+    if data == "-1":
+        raise -1
+    return jsonify(data)
 
 @app.route("/user/<int:user_id>", methods=['GET'])
 @auth.login_required
@@ -132,7 +150,9 @@ def get_user(user_id):
 @auth.login_required
 def create_user():
     user = request.get_json()
-    print(user["username"])
+    if(check_user_query(user["username"])):
+        return jsonify("-1")
+
     create_user_query(user, auth.username())
     return jsonify("ok")
 
@@ -140,8 +160,10 @@ def create_user():
 @auth.login_required
 def update_user(user_id):
     user = request.get_json()
-    update_user_query(user_id, user, auth.username())
-    return jsonify("ok")
+    code = update_user_query(user_id, user, auth.username())
+    if not code:
+        return jsonify("ok")
+    return jsonify(code)
 
 @app.route("/user/<int:user_id>/delete", methods=['DELETE'])
 @auth.login_required

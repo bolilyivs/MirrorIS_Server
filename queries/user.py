@@ -21,8 +21,12 @@ def check_user_query(name):
 def get_user_count_query():
     return User.select().count()
 
-def get_user_list_query(offset=0, limit=15):
+def get_user_list_query(offset=0, limit=15, username=""):
     userList = []
+
+    user = User.get(User.username == username)
+    if user.group != 0:
+        return "-1"
 
     for user in User.select().offset(offset).limit(limit):
         userList.append({
@@ -44,6 +48,9 @@ def update_user_query(id, jsonUser, username):
     cur_user = User.get(User.username == username)
 
     user = User().get_by_id(id)
+    if check_user_query(jsonUser["username"]) and user.username != jsonUser["username"]:
+        return "-1"
+
     user.username = jsonUser["username"]
     if(jsonUser["password"] != ""):
         user.password = jsonUser["password"]
