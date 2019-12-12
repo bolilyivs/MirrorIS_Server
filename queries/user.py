@@ -40,7 +40,7 @@ def create_user_query(jsonUser, username):
     cur_user = User.get(User.username == username)
     User(
         username = jsonUser["username"],
-        password = jsonUser["password"],
+        password = User().sha256(jsonUser["password"]),
         group = jsonUser["group"]
     ).save()
 
@@ -53,7 +53,7 @@ def update_user_query(id, jsonUser, username):
 
     user.username = jsonUser["username"]
     if(jsonUser["password"] != ""):
-        user.password = jsonUser["password"]
+        user.password = User().sha256(jsonUser["password"])
     user.group = jsonUser["group"]
     user.save()
 

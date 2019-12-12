@@ -1,6 +1,7 @@
 from peewee import *
 from models.db_getter import get_db
 import datetime
+import hashlib
 
 db = get_db()
 
@@ -12,6 +13,10 @@ class User(BaseModel):
     username = CharField()
     password = CharField()
     group = IntegerField()
+
+    def sha256(self, passwd):
+        return hashlib.sha256(passwd.encode('utf-8')).hexdigest()
+
 
 class Repository(BaseModel):
     name = CharField()

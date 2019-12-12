@@ -18,9 +18,8 @@ auth = HTTPBasicAuth()
 
 @auth.verify_password
 def verify_password(username, password):
-    print(username, password)
     try:
-        User.get(User.username == username, User.password == password)
+        User.get(User.username == username, User.password == User().sha256(password))
     except:
         return False
     return True
