@@ -12,6 +12,7 @@ class Yum:
         try:
             self.log += subprocess.check_output(str, shell=True)
         except subprocess.CalledProcessError as e:
+            self.log += e.output
             return e
         return "success"
 
@@ -74,6 +75,7 @@ class Yum:
         try:
             self.log += subprocess.check_output(["cp", "-r", "usr1", "tusr"])
         except subprocess.CalledProcessError as e:
+            self.log += e.output
             return -2
         return 0
 
