@@ -57,11 +57,10 @@ class RepositoryUpdate(RepositoryBase):
         self.update_date_task()
         dir_path = f"{self.repo.mirror_zpool}/{self.repo.mirror_location}"
         out = (0, "")
-        # run("/zstorage/yumi/", "testDir", "https://mirror.yandex.ru/centos/7.7.1908/os/x86_64/")
-        if self.repo.mirror_type == "yum":
+        if self.repo.mirror_type == 1:
             yum = Yum()
-            #code = yum.run(dir_path, "yum", self.repo.mirror_url)
-            #out = (code, yum.log)
+            code = yum.run("/"+dir_path + "/", self.repo.mirror_location, self.repo.mirror_url)
+            out = (code, yum.log)
         else:
             out = update(dir_path, self.repo.mirror_url, self.repo.mirror_args)
         self.log_write(out[1])

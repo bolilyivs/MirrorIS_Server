@@ -10,9 +10,9 @@ class Yum:
 
     def subproc(self, str):
         try:
-            self.log += subprocess.check_output(str, shell=True)
+            self.log += subprocess.check_output(str, shell=True).decode('utf-8')
         except subprocess.CalledProcessError as e:
-            self.log += e.output
+            self.log += e.output.decode('utf-8')
             return e
         return "success"
 
@@ -21,15 +21,9 @@ class Yum:
         try:
             self.subproc("wget -P " + dirPath + dirName + " " + linkFile)
         except subprocess.CalledProcessError as e:
+            self.log += e.output.decode('utf-8')
             return e
         return "success"
-
-
-    def createStruct(self, dirPath, dirName):
-        self.subproc("cd " + dirPath)
-        self.subproc("mkdir downloads")
-        self.subproc("mkdir " + dirName)
-
 
     def parse(self, dirPath, dirName, link):
         dom = xml.dom.minidom.parse(dirPath + dirName + "/repomd.xml")
@@ -64,7 +58,6 @@ class Yum:
 
 
     def run(self, dirPath, dirName, link):
-        self.createStruct(dirPath, dirName)
         self.downloadFile(dirPath, dirName, link + "repodata/repomd.xml")
         self.downloadFile(dirPath, dirName, link + "repodata/repomd.xml.asc")
         self.parse(dirPath, dirName, link)
@@ -73,9 +66,9 @@ class Yum:
 
     def merge(self):
         try:
-            self.log += subprocess.check_output(["cp", "-r", "usr1", "tusr"])
+            self.log += subprocess.check_output(["cp", "-r", "usr1", "tusr"]).decode('utf-8')
         except subprocess.CalledProcessError as e:
-            self.log += e.output
+            self.log += e.output.decode('utf-8')
             return -2
         return 0
 

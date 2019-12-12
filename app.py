@@ -81,12 +81,20 @@ def create_repository():
         return jsonify("-1")
 
     result = ""
-    if repository["mirror_type"] == "yum":
+    if int(repository["mirror_type"]) == 0:
         result = re.match(r"^(?:rsync:\/\/)?[\w.-]+(?:\.[\w\.-]+)+[\w\-\._~:/?#[\]@!\$&'\(\)\*\+,;=.]+$",repository["mirror_url"])
     else:
-        result = re.match(r"^(?:http(s)?\/\/)?[\w.-]+(?:\.[\w\.-]+)+[\w\-\._~:/?#[\]@!\$&'\(\)\*\+,;=.]+$", repository["mirror_url"])
+        result = re.match(r"^(?:http(s)?:\/\/)?[\w.-]+(?:\.[\w\.-]+)+[\w\-\._~:/?#[\]@!\$&'\(\)\*\+,;=.]+$", repository["mirror_url"])
+
+
     if not result:
         return jsonify("-2")
+
+    result = re.match(r"^[A-Za-z0-9_]+$", repository["mirror_location"])
+
+    if not result:
+        return jsonify("-3")
+
     create_repository_query(repository, auth.username())
     return jsonify("ok")
 
@@ -96,14 +104,19 @@ def update_repository(repository_id):
     repository = request.get_json()
 
     result = ""
-    if repository["mirror_type"] == "yum":
-        result = re.match(r"^(?:rsync:\/\/)?[\w.-]+(?:\.[\w\.-]+)+[\w\-\._~:/?#[\]@!\$&'\(\)\*\+,;=.]+$",
-                          repository["mirror_url"])
+    if int(repository["mirror_type"]) == 0:
+        result = re.match(r"^(?:rsync:\/\/)?[\w.-]+(?:\.[\w\.-]+)+[\w\-\._~:/?#[\]@!\$&'\(\)\*\+,;=.]+$",repository["mirror_url"])
     else:
-        result = re.match(r"^(?:http(s)?\/\/)?[\w.-]+(?:\.[\w\.-]+)+[\w\-\._~:/?#[\]@!\$&'\(\)\*\+,;=.]+$",
-                          repository["mirror_url"])
+        result = re.match(r"^(?:http(s)?:\/\/)?[\w.-]+(?:\.[\w\.-]+)+[\w\-\._~:/?#[\]@!\$&'\(\)\*\+,;=.]+$", repository["mirror_url"])
+
     if not result:
         return jsonify("-2")
+
+    result = re.match(r"^[A-Za-z0-9_]+$", repository["mirror_location"])
+
+    if not result:
+        return jsonify("-3")
+
     code = update_repository_query(repository_id, repository, auth.username())
     if not code:
         return jsonify("ok")
