@@ -27,7 +27,7 @@ class Repository(BaseModel):
     mirror_args = CharField()
     mirror_init = BooleanField(default=False)
 
-    user = ForeignKeyField(User, backref='tasks')
+    user = ForeignKeyField(User, backref='tasks', on_delete='CASCADE')
 
     schedule_status = BooleanField(default=False)
     schedule_run = BooleanField(default=False)
@@ -46,9 +46,9 @@ class Repository(BaseModel):
 
 class Task(BaseModel):
     message = CharField()
-    repository = ForeignKeyField(Repository, backref='tasks')
+    repository = CharField()
     user = ForeignKeyField(User, backref='logs')
     date = DateTimeField(default=datetime.datetime.now)
 
 class QueueTask(BaseModel):
-    repository = ForeignKeyField(Repository, backref='repositorys', unique=True)
+    repository = ForeignKeyField(Repository, backref='repositories', unique=True, on_delete='CASCADE')

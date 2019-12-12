@@ -6,6 +6,7 @@ from queries.user import *
 from queries.task import *
 import re
 from repository import scripts
+import config
 
 DEBUG = True
 
@@ -228,8 +229,11 @@ def get_task(task_id):
 @app.route("/zpool", methods=['GET'])
 @auth.login_required
 def get_zpool_list_resp():
-    res = scripts.get_zpool_list()[1].decode('utf-8').split('\n')[:-1]
-    return jsonify(res)
+    if config.isWork:
+        res = scripts.get_zpool_list()[1].decode('utf-8').split('\n')[:-1]
+        return jsonify(res)
+    else:
+        return jsonify(["zroot"])
 
 #####################################
 ##  Main

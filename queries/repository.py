@@ -94,7 +94,7 @@ def create_repository_query(jsonRepository, username):
         schedule_year = jsonRepository["schedule_year"]
     ).save()
     repository = Repository.get(Repository.name == jsonRepository["name"])
-    Task(repository = repository, message="{} create".format(jsonRepository["name"]), user=user).save()
+    Task(repository = repository.name, message="{} create".format(jsonRepository["name"]), user=user).save()
     ###############
     TaskRunner(RepositoryFullCreate(repository)).run()
     ###############
@@ -132,7 +132,7 @@ def update_repository_query(id, jsonRepository, username):
     repository.save()
 
     repository = Repository.get(Repository.name == jsonRepository["name"])
-    Task(repository=repository, message="{} update".format(jsonRepository["name"]), user=user).save()
+    Task(repository=repository.name, message="{} update".format(jsonRepository["name"]), user=user).save()
     ###############
     if(repository.mirror_location != mirror_location):
         TaskRunner(RepositoryReset(repository)).run()
@@ -145,7 +145,7 @@ def delete_repository_query(id, username):
     ###############
     TaskRunner(RepositoryDelete(repository)).run()
     ###############
-    Task(repository = repository, message="{} delete".format(repository.name), user=user).save()
+    Task(repository = repository.name, message="{} delete".format(repository.name), user=user).save()
     Repository().delete_by_id(id)
 
 def run_repository_query(id, username):
@@ -154,7 +154,7 @@ def run_repository_query(id, username):
     ###############
     TaskRunner(RepositoryUpdate(repository)).run()
     ###############
-    Task(repository=repository, message="{} run".format(repository.name), user=user).save()
+    Task(repository=repository.name, message="{} run".format(repository.name), user=user).save()
 
 def reset_repository_query(id, username):
     user = User.get(User.username == username)
@@ -163,4 +163,4 @@ def reset_repository_query(id, username):
     ###############
     TaskRunner(RepositoryReset(repository)).run()
     ###############
-    Task(repository=repository, message="{} run".format(repository.name), user=user).save()
+    Task(repository=repository.name, message="{} run".format(repository.name), user=user).save()

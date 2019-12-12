@@ -4,7 +4,7 @@ import threading
 
 create_tables()
 init_user()
-#init_Task()
+init_Task()
 
 while threading.activeCount() > 1:
   time.sleep(5)
