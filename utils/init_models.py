@@ -8,7 +8,7 @@ def init_user():
 
 
 def init_Task():
-    for i in range(10):
+    for i in range(2):
         create_repository_query({
             "mirror_zpool": "zroot",
             "mirror_args": "-vaHz",

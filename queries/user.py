@@ -62,7 +62,7 @@ def delete_user_query(id, username):
     user = User().get_by_id(id)
     if user.username == "root":
         raise -1
-    User().delete_by_id(id)
+    user.delete_instance(id)
 
 def get_group_query(username):
     user = User.get(User.username == username)
