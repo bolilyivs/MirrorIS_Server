@@ -5,6 +5,7 @@ from queries.repository import *
 from queries.user import *
 from queries.task import *
 import re
+from repository import scripts
 
 DEBUG = True
 
@@ -78,7 +79,12 @@ def create_repository():
     repository = request.get_json()
     if (check_repository_query(repository["name"])):
         return jsonify("-1")
-    result = re.match(r"^(?:|rsync:\/\/)?[\w.-]+(?:\.[\w\.-]+)+[\w\-\._~:/?#[\]@!\$&'\(\)\*\+,;=.]+$", repository["mirror_url"])
+
+    result = ""
+    if repository["mirror_type"] == "yum":
+        result = re.match(r"^(?:rsync:\/\/)?[\w.-]+(?:\.[\w\.-]+)+[\w\-\._~:/?#[\]@!\$&'\(\)\*\+,;=.]+$",repository["mirror_url"])
+    else:
+        result = re.match(r"^(?:http(s)?\/\/)?[\w.-]+(?:\.[\w\.-]+)+[\w\-\._~:/?#[\]@!\$&'\(\)\*\+,;=.]+$", repository["mirror_url"])
     if not result:
         return jsonify("-2")
     create_repository_query(repository, auth.username())
@@ -89,8 +95,13 @@ def create_repository():
 def update_repository(repository_id):
     repository = request.get_json()
 
-    result = re.match(r"^(?:|rsync:\/\/)?[\w.-]+(?:\.[\w\.-]+)+[\w\-\._~:/?#[\]@!\$&'\(\)\*\+,;=.]+$",
-                      repository["mirror_url"])
+    result = ""
+    if repository["mirror_type"] == "yum":
+        result = re.match(r"^(?:rsync:\/\/)?[\w.-]+(?:\.[\w\.-]+)+[\w\-\._~:/?#[\]@!\$&'\(\)\*\+,;=.]+$",
+                          repository["mirror_url"])
+    else:
+        result = re.match(r"^(?:http(s)?\/\/)?[\w.-]+(?:\.[\w\.-]+)+[\w\-\._~:/?#[\]@!\$&'\(\)\*\+,;=.]+$",
+                          repository["mirror_url"])
     if not result:
         return jsonify("-2")
     code = update_repository_query(repository_id, repository, auth.username())
@@ -205,8 +216,8 @@ def get_task(task_id):
 @app.route("/zpool", methods=['GET'])
 @auth.login_required
 def get_zpool_list_resp():
-    #res = scripts.get_zpool_list()[1].decode('utf-8').split('\n')[:-1]
-    return jsonify(["zroot"])
+    res = scripts.get_zpool_list()[1].decode('utf-8').split('\n')[:-1]
+    return jsonify(res)
 
 #####################################
 ##  Main

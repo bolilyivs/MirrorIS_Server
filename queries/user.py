@@ -60,6 +60,8 @@ def update_user_query(id, jsonUser, username):
 def delete_user_query(id, username):
     cur_user = User.get(User.username == username)
     user = User().get_by_id(id)
+    if user.username == "root":
+        raise -1
     User().delete_by_id(id)
 
 def get_group_query(username):

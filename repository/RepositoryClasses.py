@@ -1,6 +1,7 @@
 from repository.RepositoryBase import RepositoryBase
 from repository.scripts import *
 from dateutil.relativedelta import *
+from repository.yum import Yum
 import datetime
 import time
 import config
@@ -55,8 +56,14 @@ class RepositoryUpdate(RepositoryBase):
     def base(self):
         self.update_date_task()
         dir_path = f"{self.repo.mirror_zpool}/{self.repo.mirror_location}"
-
-        out = update(dir_path, self.repo.mirror_url, self.repo.mirror_args)
+        out = (0, "")
+        # run("/zstorage/yumi/", "testDir", "https://mirror.yandex.ru/centos/7.7.1908/os/x86_64/")
+        if self.repo.mirror_type == "yum":
+            yum = Yum()
+            #code = yum.run(dir_path, "yum", self.repo.mirror_url)
+            #out = (code, yum.log)
+        else:
+            out = update(dir_path, self.repo.mirror_url, self.repo.mirror_args)
         self.log_write(out[1])
         if( out[0] != 0):
             self.log_write(self.get_error_message())
