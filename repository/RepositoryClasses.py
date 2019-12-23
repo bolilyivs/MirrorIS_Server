@@ -78,6 +78,12 @@ class RepositoryUpdate(RepositoryBase):
 
         print("snapshot", dir_path, self.repo.schedule_number)
 
+        out = run_user_script_update(self.repo)
+        self.log_write(out[1])
+        if (out[0] != 0):
+            self.log_write("user script update error")
+            return 3
+
         return 0
 
 
@@ -130,12 +136,18 @@ class RepositoryReset(RepositoryBase):
         return "repository finished reset"
 
     def base(self):
+        out = run_user_script_truncate(self.repo)
+        self.log_write(out[1])
+        if (out[0] != 0):
+            self.log_write("user script truncate error")
+            return 1
+
         if RepositoryDelete(self.repo).run() != 0:
             print("RepositoryDelete", "error")
-            return 1
+            return 2
         if RepositoryFullCreate(self.repo).run() != 0:
             print("RepositoryCreate", "error")
-            return 2
+            return 3
         print("reset")
         return 0
 
