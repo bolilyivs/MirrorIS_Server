@@ -58,11 +58,18 @@ class RepositoryUpdate(RepositoryBase):
         dir_path = f"{self.repo.mirror_zpool}/{self.repo.mirror_location}"
         out = (0, "")
         if self.repo.mirror_type == 1:
-            yum = Yum()
-            code = yum.run("/"+dir_path + "/", self.repo.mirror_location, self.repo.mirror_url)
-            out = (code, yum.log)
+            try:
+                if config.isWork:
+                    yum = Yum("/"+dir_path+"/", self.repo.mirror_url)
+                    out = yum.update()
+                else:
+                    print("Yum update")
+                    out = (0, "Yum ok!")
+            except Exception as e:
+                out = (1, str(e))
         else:
             out = update(dir_path, self.repo.mirror_url, self.repo.mirror_args)
+
         self.log_write(out[1])
         if( out[0] != 0):
             self.log_write(self.get_error_message())
@@ -145,6 +152,8 @@ class RepositoryReset(RepositoryBase):
         if RepositoryDelete(self.repo).run() != 0:
             print("RepositoryDelete", "error")
             return 2
+        self.repo.mirror_init = False
+        self.repo.save()
         if RepositoryFullCreate(self.repo).run() != 0:
             print("RepositoryCreate", "error")
             return 3
