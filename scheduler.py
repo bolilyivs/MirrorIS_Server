@@ -45,11 +45,9 @@ def main():
   threadList = []
   clear_tasks()
   while True:
-    print("get_repos")
     if get_repos():
       print("run_task")
       run_task()
-    print("sleep")
     time.sleep(60)
 
 main()
