@@ -11,8 +11,11 @@ class RepositoryBase():
         return "task finished"
 
     def log_write(self, msg):
-        if type(msg) != str:
-            msg = msg.decode('utf-8')
+        try:
+            if type(msg) != str:
+                msg = msg.decode('utf-8')
+        except Exception as e:
+            msg = "Unreadable characters!"
         if msg != "":
             Task(repository=self.repo.name, message=msg, user=User.get_by_id(1).username).save()
 
